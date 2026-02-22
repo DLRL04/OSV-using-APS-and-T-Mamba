@@ -11,13 +11,12 @@ This repository contains the official implementation for online signature verifi
 The environment setup consists of two main parts: the feature extraction library and the Mamba sequence modeling framework.
 
 1. Requirements
-\begine{items}
 Python 3.10+
 
 PyTorch 2.1.0+
 
 CUDA 11.8+ (Required for Mamba kernels)
-\end{items}
+
 2. APS Dependency
 For Augmented Path Signatures, we utilize the iisignature library to compute iterated integrals:
 
