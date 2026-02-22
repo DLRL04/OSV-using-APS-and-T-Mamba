@@ -8,7 +8,7 @@ T-Mamba Architecture: To optimize sequence modeling, we introduce T-Mamba, which
 High Performance: Optimized for both stylus-based and finger-based online signature datasets including MCYT-100, SVC-2004 Task2, DeepSign DB this three datasets.
 
 ## Quick Start
-\begin{lstlisting}[language=bash, caption=Reproducing results with fixed seed]
+'''
 # 1. Training 
 python -m DB_train --seed 111 
 python -m DB_train --seed 222
@@ -23,4 +23,4 @@ python -m DB_eva_stylus --seed 444
 python -m DB_eva_stylus --seed 555
 # 3. Final verification and EER calculation
 python -m DB_verify_stylus 
-\end{lstlisting}
+'''
