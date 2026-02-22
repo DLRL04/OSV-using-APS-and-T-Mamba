@@ -15,7 +15,7 @@ Python 3.10+
 
 PyTorch 2.1.0+
 
-CUDA 11.8+ (Required for Mamba kernels)
+CUDA 11.8+ 
 
 2. APS Dependency
 For Augmented Path Signatures, we utilize the iisignature library to compute iterated integrals:
