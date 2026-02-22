@@ -10,39 +10,38 @@ class dataset(object):
     def __init__(self, sigDict, taskSize=1, taskNumGen=5, taskNumNeg=5, saveKey=True, finger_scene=False,window_size=10,stride=1,signature_depth=2):
         super(dataset, self).__init__()
         self.trainKeys = list(sigDict.keys())
-        self.taskSize = taskSize   #每个任务的数据大小
-        self.taskNumGen = taskNumGen #每个用户选择的 genuine 数量
+        self.taskSize = taskSize  
+        self.taskNumGen = taskNumGen
         self.taskNumNeg = taskNumNeg
         self.window_size = window_size
         self.stride= stride
         self.signature_depth =signature_depth
         self.feats = []
-        self.numGen = numpy.zeros(len(self.trainKeys), dtype=numpy.int32)# 记录每个用户的样本数量；
+        self.numGen = numpy.zeros(len(self.trainKeys), dtype=numpy.int32)
         self.numNeg = numpy.zeros(len(self.trainKeys), dtype=numpy.int32)
         # The dataset is user-by-user arranged in the following format: anchors, genuines, forgeries, anchors, ...
         print (">>>>> Extracting features... <<<<<")
-        for idx, key in enumerate(self.trainKeys):#通过 key 获取到的用户数据
+        for idx, key in enumerate(self.trainKeys):
             sys.stdout.write(">>>>> User key: %d <<<<<\r"%key)
             sys.stdout.flush()
             sigfeatExt(sigDict[key][True], self.feats, finger_scene=finger_scene,window_size=self.window_size,stride=self.stride,signature_depth=self.signature_depth)
             sigfeatExt(sigDict[key][False], self.feats, finger_scene=finger_scene,window_size=self.window_size,stride=self.stride,signature_depth=self.signature_depth)
-            self.numGen[idx] = len(sigDict[key][True])# 记录每个用户的正负样本数量
+            self.numGen[idx] = len(sigDict[key][True])
             self.numNeg[idx] = len(sigDict[key][False])
         print (">>>>> Done <<<<<")
-        self.accumNum2 = numpy.cumsum(self.numGen + self.numNeg) #得到每个用户数据的“结束位置”
-        self.accumNum = numpy.roll(self.accumNum2, 1); self.accumNum[0] = 0  #开始索引
+        self.accumNum2 = numpy.cumsum(self.numGen + self.numNeg)
+        self.accumNum = numpy.roll(self.accumNum2, 1); self.accumNum[0] = 0  
         
-        self.featDim = self.feats[0].shape[1] #特征维度
-        self.lens = numpy.zeros(len(self.feats), dtype=numpy.float32) #每个序列的时间长度
+        self.featDim = self.feats[0].shape[1] 
+        self.lens = numpy.zeros(len(self.feats), dtype=numpy.float32) 
         for i, f in enumerate(self.feats):
             self.lens[i] = f.shape[0]
 
     def __getitem__(self, index):
         sig = self.feats[index]
-        sigLen = self.lens[index]# 每个用户的实际长度
+        sigLen = self.lens[index]
         sigLabel = numpy.sum(index>=self.accumNum2) # Note that keys start from 1, while labels start from 0. 
-        # 哪个用户（用于监督学习标签）
-        # sigLabel = int(self.label_is_genuine[index])  # 1 表示真，0 表示伪
+        # sigLabel = int(self.label_is_genuine[index]) 
 
         return sig, sigLen, sigLabel
 
@@ -58,7 +57,6 @@ class dataset(object):
         numNeg = numpy.zeros(len(newKeys), dtype=numpy.int32)
         print(">>>>> addDatabase——Extracting features... <<<<<")
 
-        # 使用新的参数，如果未指定则用当前对象的默认值
         window_size = window_size or self.window_size
         stride = stride or self.stride
         signature_depth = signature_depth or self.signature_depth
@@ -94,13 +92,6 @@ class dataset(object):
             lens[i - N] = self.feats[i].shape[0]
         self.lens = numpy.concatenate((self.lens, lens))
 
-
-    # def histLens(self):
-    #     lens = numpy.zeros(len(self.feats))
-    #     for idx, f in enumerate(self.feats):
-    #         lens[idx] = f.shape[0]
-    #     plt.hist(lens, bins=30)
-    #     plt.show()
         
 class batchSampler(object):
     """docstring for sampler"""
@@ -120,7 +111,7 @@ class batchSampler(object):
     def __iter__(self):
         batch = []
         numpy.random.shuffle(self.index)
-        for i in range(self.numIters):# 每批任务包括 taskSize 个用户
+        for i in range(self.numIters):
             if self.loop:
                 idxs = self.index[numpy.arange(i, i+self.taskSize)%len(self.index)]
             else:
