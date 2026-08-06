@@ -1,5 +1,6 @@
 # Online Signature Verication Using Augmented Path Signature and T-Mamba
-This repository contains the official implementation for online signature verification using  Augmented Path Signatures for robust feature extraction and T-Mamba for efficient sequence modeling.
+This paper has been accepted to ICDAR 2026. This repository contains the official implementation for online signature verification using Augmented Path Signatures for robust feature extraction and T-Mamba for efficient sequence modeling.
+
 ## Key Features
 **Augmented Path Signatures** : Capture fine-grained geometric and analytical properties of signature.
 
